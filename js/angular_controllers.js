@@ -1,10 +1,12 @@
 var KrakUIApp = angular.module('KrakUIApp', []);
 
+var DEFAULT_ASSET_PAIR = 'XXBTZEUR';
+
 KrakUIApp.controller('KrakUIController', [ '$scope', function($scope) {
 
 	$scope.greeting = 'Hola!';
-	$scope.activeTicker = "select ticker";
-	$scope.tickers = ["none"];
+	$scope.activeTicker = "...";
+	$scope.tickers = [ "none" ];
 	$scope.assetPairs = null;
 
 	// Set chosen asset pair
@@ -27,8 +29,15 @@ KrakUIApp.controller('KrakUIController', [ '$scope', function($scope) {
 					$scope.tickers.push(assetPairName);
 				}
 			}
-			if($scope.assetPairs.XXBTZEUR) {
-				$scope.activeTicker = 'XXBTZEUR';
+			if ($scope.assetPairs[DEFAULT_ASSET_PAIR]) {
+				$scope.activeTicker = DEFAULT_ASSET_PAIR;
+			} else {
+				for (assetPairName in $scope.assetPairs) {
+					if ($scope.assetPairs.hasOwnProperty(assetPairName)) {
+						$scope.activeTicker = assetPairName;
+						break;
+					}
+				}
 			}
 			$scope.$apply();
 
