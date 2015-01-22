@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Kraken.com UI",
   "main": "index.js",
+  "browser": "./krakui.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,8 +25,17 @@
   },
   "homepage": "https://github.com/ivanarandjelovic/krakui",
 	  
-  "dependencies" :
-  	{ "kraken-api" : ">=0.1.6"
-  }
-
+  "dependencies" : { 
+	  "kraken-api" : ">=0.1.6",
+  	  "bootstrap" : ">=3.3.2",
+  	  "jquery" : ">=2.1.3"
+  },
+  "devDependencies": {
+	    "browserify": "latest",
+	     "watchify": "latest"
+	  },
+  "scripts": {
+	  "build-js": "browserify krakui.js > krakui-static.js",
+	  "watch-js": "watchify krakui.js -o js/krakui-static.js"
+	}
 }
