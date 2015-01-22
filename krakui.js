@@ -7,4 +7,3 @@ var KrakenClient = require('kraken-api');
 window.KrakUI = {};
 window.KrakUI.kraken = new KrakenClient(krakUiApiKey.api_key,krakUiApiKey.api_secret);
 
-
