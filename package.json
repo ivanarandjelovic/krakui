@@ -1,0 +1,31 @@
+{
+  "name": "krakui",
+  "version": "0.0.1",
+  "description": "Kraken.com UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ivanarandjelovic/krakui.git"
+  },
+  "keywords": [
+    "kraken",
+    "bitcoin",
+    "ui",
+    "gui",
+    "javascript"
+  ],
+  "author": "Ivan Arandjelovic <ivan.arandjelovic@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivanarandjelovic/krakui/issues"
+  },
+  "homepage": "https://github.com/ivanarandjelovic/krakui",
+	  
+  "dependencies" :
+  	{ "kraken-api" : ">=0.1.6"
+  }
+
+}
