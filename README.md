@@ -11,6 +11,8 @@ Kraken.com UI
 
 ## Developing
 
+To use locally and avoid CORS start with:
+"\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security
 
 
 ### Tools
