@@ -29,7 +29,8 @@
 	  "kraken-api" : ">=0.1.6",
   	  "bootstrap" : ">=3.3.2",
   	  "jquery" : ">=2.1.3",
-  	  "angular" : "latest"
+  	  "angular" : "latest",
+  	  "highcharts" : "latest"
   },
   "devDependencies": {
 	    "browserify": "latest",
