@@ -52,10 +52,71 @@
 	    <div class="container">
 	
 	      <div class="content">
-	        <h1>Bootstrap starter template</h1>
-	        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-	        <p class="lead">Say hello: {{greeting}}</p>
-
+			<div class="row">
+			  <div class="col-md-9">.col-md-9 placeholder</div>
+			  <div class="col-md-3">
+			  	<!-- Ticker info -->
+			  	<h3>Ticker info</h3>
+			  	<h4 class="active-text">{{activeAssetPair}}</h4>
+			  	<table class="table">
+			  		<tr>
+			  			<th>&nbsp;</th>
+			  			<th class="text-right">Price</th>
+			  			<th class="text-right">Volume</th>
+			  		</tr>
+			  		<tr>
+			  			<th>Ask</th>
+			  			<td class="text-right active-text">{{ticker.a[0] | number : 5}}</td>
+			  			<td class="text-right active-text">{{ticker.a[1] | number : 8}}</td>
+			  		</tr>
+			  		<tr>
+			  			<th>Bid</th>
+			  			<td class="text-right active-text">{{ticker.b[0] | number : 5}}</td>
+			  			<td class="text-right active-text">{{ticker.b[1] | number : 8}}</td>
+			  		</tr>
+			  		<tr>
+			  			<th>Last</th>
+			  			<td class="text-right active-text">{{ticker.c[0] | number : 5}}</td>
+			  			<td class="text-right active-text">{{ticker.c[1] | number : 8}}</td>
+			  		</tr>
+			  		<tr>
+			  			<th>&nbsp;</th>
+			  			<th class="text-right">Today</th>
+			  			<th class="text-right">Last 24h</th>
+			  		</tr>
+			  		<tr>
+			  			<th>Volume</th>
+			  			<td class="text-right active-text">{{ticker.v[0] | number : 8}}</td>
+			  			<td class="text-right active-text">{{ticker.v[1] | number : 8}}</td>
+			  		</tr>
+			  		<tr>
+			  			<th>Average</th>
+			  			<td class="text-right active-text">{{ticker.p[0] | number : 5}}</td>
+			  			<td class="text-right active-text">{{ticker.p[1] | number : 5}}</td>
+			  		</tr>
+			  		<tr>
+			  			<th>Trades</th>
+			  			<td class="text-right active-text">{{ticker.t[0]}}</td>
+			  			<td class="text-right active-text">{{ticker.t[1]}}</td>
+			  		</tr>
+			  		<tr>
+			  			<th>Low</th>
+			  			<td class="text-right active-text">{{ticker.l[0] | number : 5}}</td>
+			  			<td class="text-right active-text">{{ticker.l[1] | number : 5}}</td>
+			  		</tr>
+			  		<tr>
+			  			<th>High</th>
+			  			<td class="text-right active-text">{{ticker.h[0] | number : 5}}</td>
+			  			<td class="text-right active-text">{{ticker.h[1] | number : 5}}</td>
+			  		</tr>
+			  		<tr>
+			  			<th>Opening</th>
+			  			<td class="text-right active-text">{{ticker.o | number : 5}}</td>
+			  			<td class="text-right active-text"></td>
+			  		</tr>
+			  	</table>
+			  </div>
+			</div>
 	      </div>
 	
 	    </div><!-- /.container -->

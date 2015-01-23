@@ -7,3 +7,8 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+
+/* Dynamic content that changes on the page */
+.active-text {
+  color: #ffff55;
+}
