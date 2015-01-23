@@ -33,8 +33,8 @@ KrakUIApp.controller('KrakUIController', [
 									console.log("got ticker info:")
 									console.log(data.result);
 									$scope.ticker = data.result[$scope.activeAssetPair];
-									$scope.$apply();
 								}
+								//$scope.$apply();
 							});
 				}
 			}
@@ -74,7 +74,7 @@ KrakUIApp.controller('KrakUIController', [
 									}
 								}
 							}
-							$scope.$apply();
+							//$scope.$apply();
 						}
 					});
 
