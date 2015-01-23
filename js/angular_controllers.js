@@ -8,20 +8,20 @@ KrakUIApp.controller('KrakUIController', [
 		function($scope, $interval) {
 
 			$scope.greeting = 'Hola!';
-			$scope.activeTicker = "...";
-			$scope.tickers = [ "none" ];
+			$scope.activeAssetPair = "...";
+			$scope.assetPairNames = [ "none" ];
 			$scope.assetPairs = null;
 			$scope.serverTime = new Date(0);
 			$scope.serverUnixtime = 0;
 			var servertimeUpdateCounter = 60;
 
 			// Set chosen asset pair
-			$scope.setActiveTicker = function(newActiveTicker) {
-				console.debug("Setting active ticker to : " + newActiveTicker)
-				$scope.activeTicker = newActiveTicker;
+			$scope.setActiveAssetPair = function(newActiveAssetPair) {
+				console.debug("Setting active asset pair to : " + newActiveAssetPair)
+				$scope.activeAssetPair = newActiveAssetPair;
 			};
 
-			// get initial set of tradable asset pairs
+			// get initial set of treadable asset pairs
 			window.KrakUI.kraken.api('AssetPairs', {},
 					function(error, data) {
 						if (error) {
@@ -30,26 +30,25 @@ KrakUIApp.controller('KrakUIController', [
 							console.log("got asset pairs:")
 							console.log(data.result);
 							$scope.assetPairs = data.result;
-							$scope.tickers = [];
+							$scope.assetPairNames = [];
 							for (assetPairName in $scope.assetPairs) {
 								if ($scope.assetPairs
 										.hasOwnProperty(assetPairName)) {
-									$scope.tickers.push(assetPairName);
+									$scope.assetPairNames.push(assetPairName);
 								}
 							}
 							if ($scope.assetPairs[DEFAULT_ASSET_PAIR]) {
-								$scope.activeTicker = DEFAULT_ASSET_PAIR;
+								$scope.activeAssetPair = DEFAULT_ASSET_PAIR;
 							} else {
 								for (assetPairName in $scope.assetPairs) {
 									if ($scope.assetPairs
 											.hasOwnProperty(assetPairName)) {
-										$scope.activeTicker = assetPairName;
+										$scope.activeAssetPair = assetPairName;
 										break;
 									}
 								}
 							}
 							$scope.$apply();
-
 						}
 					});
 			// Set update of server time each second
