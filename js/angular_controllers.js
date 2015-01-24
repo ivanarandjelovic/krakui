@@ -3,6 +3,17 @@ var KrakUIApp = angular.module('KrakUIApp', []);
 var DEFAULT_ASSET_PAIR = 'XXBTZEUR';
 var TICKER_UPDATE_INTERVAL_IN_MS = 5000;
 var OHLC_UPDATE_INTERVAL_IN_MS = 10000;
+var graphPointCount = 60;
+var graphPointInterval = 1;
+var graphIntervals  = [
+                       {name:"hour", interval:1, count:60}
+                       , {name:"3h", interval:1, count:180}
+                       , {name:"8h", interval:5, count:96}
+                       , {name:"24h", interval:15, count:96}
+                       , {name:"1 week", interval:240, count:42}
+                       , {name:"1 month", interval:1440, count:31}
+                       , {name:"1 year", interval:1440, count:366}
+                       ];
 
 KrakUIApp
 		.controller(
@@ -22,6 +33,8 @@ KrakUIApp
 							$scope.serverUnixtime = 0;
 							$scope.ticker = null;
 							$scope.last = null;
+							$scope.graphIntervals = graphIntervals;
+							$scope.selectedGraphInterval = 0;
 							
 							// Function to update current active ticker value
 							var tickerUpdate = function() {
@@ -52,8 +65,9 @@ KrakUIApp
 										.api(
 												'OHLC',
 												{
-													pair : $scope.activeAssetPair,
-													since : $scope.last
+													"pair" : $scope.activeAssetPair,
+													"since" : $scope.last,
+													"interval" : graphPointInterval
 												},
 												function(error, data) {
 													var OHLCdata = null;
@@ -105,7 +119,8 @@ KrakUIApp
 								} else {
 									// get ticker info
 									window.KrakUI.kraken.api('OHLC', {
-										pair : $scope.activeAssetPair
+										"pair" : $scope.activeAssetPair
+										,"interval" : graphPointInterval
 									}, function(error, data) {
 										var OHLCdata = null;
 										if (error) {
@@ -133,7 +148,7 @@ KrakUIApp
 										
 									});
 								}
-							}
+							};
 
 							// Set chosen asset pair
 							$scope.setActiveAssetPair = function(newActiveAssetPair) {
@@ -199,6 +214,13 @@ KrakUIApp
 								tickerUpdate();
 							}, TICKER_UPDATE_INTERVAL_IN_MS);
 							
+							$scope.changeGraph = function() {
+								graphPointCount = graphIntervals[$scope.selectedGraphInterval].count;
+								graphPointInterval = graphIntervals[$scope.selectedGraphInterval].interval;
+								initOHLC();
+							};
+							
+							
 						} ]);
 
 // Chart drawing section:
@@ -212,7 +234,7 @@ var drawOHLC = function(activePairName, OHLCdata) {
 	var item = null;
 	
 	// for(i = 0; i<OHLCdata.length;i++) {
-	for (i = Math.max(0, OHLCdata.length - 60); i < OHLCdata.length; i++) {
+	for (i = Math.max(0, OHLCdata.length - graphPointCount); i < OHLCdata.length; i++) {
 		item = OHLCdata[i];
 		highs.push({
 			x : item[0] * 1000,
@@ -237,7 +259,7 @@ var drawOHLC = function(activePairName, OHLCdata) {
 			},
 			xAxis : {
 				type : 'datetime',
-				tickPixelInterval : 150
+				tickPixelInterval : 100
 			// ,
 			// categories: times
 			},

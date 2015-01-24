@@ -55,6 +55,9 @@
 	      <div class="content">
 			<div class="row">
 			  <div class="col-md-9">
+			  	<select class="form-control" name="graphInterval" ng-model="selectedGraphInterval" ng-change="changeGraph()">
+			  		<option ng-repeat="item in graphIntervals" value="{{$index}}" >{{item.name}}</option>
+			  	</select>
 			  	<div id="chartOHLC" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 			  </div>
 			  <div class="col-md-3">
