@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Kraken.com UI",
   "main": "index.js",
-  "browser": "./krakui.js",
+  "browser": "./index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -33,11 +33,9 @@
   	  "highcharts" : "latest"
   },
   "devDependencies": {
-	    "browserify": "latest",
-	     "watchify": "latest"
+	    "browserify": "latest"
 	  },
   "scripts": {
-	  "build-js": "browserify krakui.js > krakui-static.js",
-	  "watch-js": "watchify krakui.js -o js/krakui-static.js"
+	  "build-js": "browserify krakui.js > krakui-static.js"
 	}
 }
