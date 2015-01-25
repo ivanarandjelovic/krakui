@@ -36,7 +36,7 @@
 	    "browserify": "latest"
 	  },
   "scripts": {
-	  "build-js": "browserify krakui.js > js/krakui-static.js",
-	  "dist": "rm -rf ./dist/index.* ./dist/js ./dist/node_modules; cp *.html ./dist; cp *.css ./dist; cp -r js ./dist; rsync -a --exclude \"docs\" --exclude \".*\" node_modules/* ./dist/node_modules/"
+	  "build-js": "browserify krakui.js > js/krakui-static.js"
+	  //,"dist": "rm -rf ./dist/index.* ./dist/js ./dist/node_modules; cp *.html ./dist; cp *.css ./dist; cp -r js ./dist; rsync -a --exclude \"docs\" --exclude \".*\" node_modules/* ./dist/node_modules/"
 	}
 }
