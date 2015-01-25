@@ -5,6 +5,10 @@ var TICKER_UPDATE_INTERVAL_IN_MS = 5000;
 var OHLC_UPDATE_INTERVAL_IN_MS = 10000;
 var graphPointCount = 60;
 var graphPointInterval = 1;
+var orderBookCount = 1000;
+var ordersData = null;
+var orderBid1, orderBid2, orderBid3, orderSell1, orderSell2, orderSell3;
+
 var graphIntervals = [ {
 	name : "hour",
 	interval : 1,
@@ -55,6 +59,7 @@ KrakUIApp
 							$scope.last = null;
 							$scope.graphIntervals = graphIntervals;
 							$scope.selectedGraphInterval = 0;
+							$scope.orderDataTime = null;
 							
 							// Function to update current active ticker value
 							var tickerUpdate = function() {
@@ -174,6 +179,29 @@ KrakUIApp
 								}
 							};
 							
+							// get all the orders for current asset pair
+							var getOrders = function() {
+								window.KrakUI.kraken.api('Depth', {
+									"pair" : $scope.activeAssetPair,
+									"count" : orderBookCount
+								}, function(error, data) {
+									orderData = null;
+									if (error) {
+										console.log(error);
+										// We have to re-schedule this for later:
+										console.log("got order data error, will repeat later");
+										$interval(getOrders, 1000, 1, false);
+									} else {
+										console
+												.log("got getOrders data (probably too much to log)");
+										orderData = data.result[$scope.activeAssetPair];
+										$scope.orderDataTime = new Date();
+									}
+									recalcOrders();
+									drawOrders($scope.activeAssetPair, orderData);
+								});
+							}
+
 							// Set chosen asset pair
 							$scope.setActiveAssetPair = function(newActiveAssetPair) {
 								console.debug("Setting active asset pair to : "
@@ -182,6 +210,7 @@ KrakUIApp
 								// Initiate ticker update and other updates:
 								tickerUpdate();
 								initOHLC();
+								getOrders();
 							};
 							
 							// get initial set of treadable asset pairs
@@ -246,7 +275,207 @@ KrakUIApp
 							
 						} ]);
 
+// calculate data needed for order graph
+var recalcOrders = function() {
+	KrakUIApp.orderBid1 = [ {
+		x : 1,
+		y : 1
+	}, {
+		x : 2,
+		y : 1
+	}, {
+		x : 3,
+		y : 1
+	}, {
+		x : 4,
+		y : 0
+	}, {
+		x : 5,
+		y : 0
+	}, {
+		x : 6,
+		y : 0
+	} ];
+	
+	KrakUIApp.orderBid2 = [ {
+		x : 1,
+		y : 1
+	}, {
+		x : 2,
+		y : 1
+	}, {
+		x : 3,
+		y : 1
+	}, {
+		x : 4,
+		y : 0
+	}, {
+		x : 5,
+		y : 0
+	}, {
+		x : 6,
+		y : 0
+	} ];
+	KrakUIApp.orderBid3 = [ {
+		x : 1,
+		y : 1
+	}, {
+		x : 2,
+		y : 1
+	}, {
+		x : 3,
+		y : 1
+	}, {
+		x : 4,
+		y : 0
+	}, {
+		x : 5,
+		y : 0
+	}, {
+		x : 6,
+		y : 0
+	} ];
+	KrakUIApp.orderSell1 = [ {
+		x : 1,
+		y : 1
+	}, {
+		x : 2,
+		y : 1
+	}, {
+		x : 3,
+		y : 1
+	}, {
+		x : 4,
+		y : 0
+	}, {
+		x : 5,
+		y : 0
+	}, {
+		x : 6,
+		y : 0
+	} ];
+	KrakUIApp.orderSell2 = [ {
+		x : 1,
+		y : 1
+	}, {
+		x : 2,
+		y : 1
+	}, {
+		x : 3,
+		y : 1
+	}, {
+		x : 4,
+		y : 0
+	}, {
+		x : 5,
+		y : 0
+	}, {
+		x : 6,
+		y : 0
+	} ];
+	KrakUIApp.orderSell3 = [ {
+		x : 1,
+		y : 1
+	}, {
+		x : 2,
+		y : 1
+	}, {
+		x : 3,
+		y : 1
+	}, {
+		x : 4,
+		y : 0
+	}, {
+		x : 5,
+		y : 0
+	}, {
+		x : 6,
+		y : 0
+	} ];
+	;
+}
+
 // Chart drawing section:
+
+var drawOrders = function(activePairName, orderData) {
+	if (KrakUIApp.chartOrders) {
+		KrakUIApp.chartOrders.destroy();
+		KrakUIApp.chartOrders = null;
+	}
+	
+	$(function() {
+		var $chartCont = $('#chartOrders').highcharts({
+			chart : {
+				type : 'area'
+			},
+			title : {
+				text : 'Orders',
+				x : -20
+			// center
+			},
+			subtitle : {
+				text : 'Asset pair: ' + activePairName,
+				x : -20
+			},
+			xAxis : {
+				
+				tickPixelInterval : 100
+			// ,
+			// categories: times
+			},
+			yAxis : {
+				title : {
+					text : 'Amount'
+				},
+				plotLines : [ {
+					value : 0,
+					width : 1,
+					color : '#808080'
+				} ]
+			},
+			tooltip : {
+				valueSuffix : ' Pieces'
+			},
+			legend : {
+				layout : 'vertical',
+				align : 'right',
+				verticalAlign : 'middle',
+				borderWidth : 0
+			},
+			 plotOptions: {
+         area: {
+             stacking: 'normal',
+             lineColor: '#666666',
+             lineWidth: 1,
+             marker: {
+                 lineWidth: 1,
+                 lineColor: '#666666'
+             }
+         }
+     },
+			series : [ {
+				name : 'bid1',
+				data : KrakUIApp.orderBid1
+			}, {
+				name : 'bid2',
+				data : KrakUIApp.orderBid2
+			}, {
+				name : 'bid3',
+				data : KrakUIApp.orderBid2
+			}, {
+				name : 'sell1',
+				data : KrakUIApp.orderSell1
+			}, {
+				name : 'sell2',
+				data : KrakUIApp.orderSell2
+			}, {
+				name : 'sell3',
+				data : KrakUIApp.orderSell3
+			} ]
+		});
+		KrakUIApp.chartOrders = $("#chartOrders").highcharts();
+	});
+}
 
 var drawOHLC = function(activePairName, OHLCdata) {
 	
