@@ -199,7 +199,7 @@ KrakUIApp
 										orderData = data.result[$scope.activeAssetPair];
 										$scope.orderDataTime = new Date();
 									}
-									recalcOrders(orderData);
+									recalcOrders(orderData, false);
 									drawOrders($scope.activeAssetPair);
 									drawOrdersLin($scope.activeAssetPair);
 								});
@@ -223,7 +223,7 @@ KrakUIApp
 										orderData = data.result[$scope.activeAssetPair];
 										$scope.orderDataTime = new Date();
 									}
-									recalcOrders(orderData);
+									recalcOrders(orderData, true);
 									updateOrdersGraph();
 									updateOrdersLinGraph();
 									console.log("Updating orders done.");
@@ -306,7 +306,7 @@ KrakUIApp
 						} ]);
 
 // calculate data needed for order graph
-var recalcOrders = function(orderData) {
+var recalcOrders = function(orderData, update) {
 	
 	var asks = orderData.asks;
 	var bids = orderData.bids;
@@ -315,41 +315,43 @@ var recalcOrders = function(orderData) {
 	var min1ago = now - 60;
 	var min15ago = now - 15 * 60;
 	
-	var minPrice = null, maxPrice = null, i;
+	if(!update) {
+	KrakUIApp.minPrice = null, KrakUIApp.maxPrice = null, i;
 	
-	for (i = 0; i < asks.length; i++) {
-		if (!minPrice) {
-			minPrice = Number(asks[i][0]);
-		}
-		if (!maxPrice) {
-			maxPrice = Number(asks[i][0]);
-		}
-		if (minPrice > Number(asks[i][0])) {
-			minPrice = Number(asks[i][0]);
-		}
-		if (maxPrice < Number(asks[i][0])) {
-			maxPrice = Number(asks[i][0]);
-		}
+  	for (i = 0; i < asks.length; i++) {
+  		if (!KrakUIApp.minPrice) {
+  			KrakUIApp.minPrice = Number(asks[i][0]);
+  		}
+  		if (!KrakUIApp.maxPrice) {
+  			KrakUIApp.maxPrice = Number(asks[i][0]);
+  		}
+  		if (KrakUIApp.minPrice > Number(asks[i][0])) {
+  			KrakUIApp.minPrice = Number(asks[i][0]);
+  		}
+  		if (KrakUIApp.maxPrice < Number(asks[i][0])) {
+  			KrakUIApp.maxPrice = Number(asks[i][0]);
+  		}
+  	}
+  	
+  	for (i = 0; i < bids.length; i++) {
+  		if (!KrakUIApp.minPrice) {
+  			KrakUIApp.minPrice = Number(bids[i][0]);
+  		}
+  		if (!KrakUIApp.maxPrice) {
+  			KrakUIApp.maxPrice = Number(bids[i][0]);
+  		}
+  		if (KrakUIApp.minPrice > Number(bids[i][0])) {
+  			KrakUIApp.minPrice = Number(bids[i][0]);
+  		}
+  		if (KrakUIApp.maxPrice < Number(bids[i][0])) {
+  			KrakUIApp.maxPrice = Number(bids[i][0]);
+  		}
+  	}
 	}
 	
-	for (i = 0; i < bids.length; i++) {
-		if (!minPrice) {
-			minPrice = Number(bids[i][0]);
-		}
-		if (!maxPrice) {
-			maxPrice = Number(bids[i][0]);
-		}
-		if (minPrice > Number(bids[i][0])) {
-			minPrice = Number(bids[i][0]);
-		}
-		if (maxPrice < Number(bids[i][0])) {
-			maxPrice = Number(bids[i][0]);
-		}
-	}
-	
-	if (minPrice && maxPrice) {
+	if (KrakUIApp.minPrice && KrakUIApp.maxPrice) {
 		// We have our range here:
-		var range = maxPrice - minPrice;
+		var range = KrakUIApp.maxPrice - KrakUIApp.minPrice;
 		var step = range / ordLinPointCount; // We want 1000 graph points (easy to
 		// calculate the "bucket")
 		KrakUIApp.ordSell1Lin = [];
@@ -358,7 +360,7 @@ var recalcOrders = function(orderData) {
 		KrakUIApp.ordBid1Lin = [];
 		KrakUIApp.ordBid2Lin = [];
 		KrakUIApp.ordBid3Lin = [];
-		var index = minPrice, i;
+		var index = KrakUIApp.minPrice, i;
 		for (i = 0; i <= ordLinPointCount; i++) {
 			/*
 			 * KrakUIApp.ordSell1Lin[index] = 0.0; KrakUIApp.ordSell2Lin[index] = 0.0;
@@ -394,12 +396,13 @@ var recalcOrders = function(orderData) {
 		
 		for (i = 0; i < asks.length; i++) {
 			item = asks[i];
-			index = Math.ceil((item[0] - minPrice) / step);
-			if (index < 0) {
-				index = 0;
-			} else if (index > ordLinPointCount) {
-				index = ordLinPointCount;
+			index = Math.ceil((item[0] - KrakUIApp.minPrice) / step);
+			
+			// Skip values our of our (initial) range
+			if (index < 0 || index>ordLinPointCount) {
+				continue;
 			}
+			
 			if (item[2] > min1ago) {
 				KrakUIApp.ordSell1Lin[index].y += Number(item[1]);
 			} else if (item[2] > min15ago) {
@@ -410,7 +413,7 @@ var recalcOrders = function(orderData) {
 		}
 		for (i = 0; i < bids.length; i++) {
 			item = bids[i];
-			index = Math.ceil((item[0] - minPrice) / step);
+			index = Math.ceil((item[0] - KrakUIApp.minPrice) / step);
 			if (index < 0) {
 				index = 0;
 			} else if (index > ordLinPointCount) {
@@ -496,12 +499,12 @@ var updateOrdersLinGraph = function() {
 	if (!KrakUIApp.chartOrdersLin) {
 		return;
 	} else {
-		KrakUIApp.chartOrdersLin.series[0].setData(KrakUIApp.ordBid1Lin,false,"mixed",true);
-		KrakUIApp.chartOrdersLin.series[1].setData(KrakUIApp.ordBid2Lin,false,"mixed",true);
-		KrakUIApp.chartOrdersLin.series[2].setData(KrakUIApp.ordBid3Lin,false,"mixed",true);
-		KrakUIApp.chartOrdersLin.series[3].setData(KrakUIApp.ordSell1Lin,false,"mixed",true);
-		KrakUIApp.chartOrdersLin.series[4].setData(KrakUIApp.ordSell2Lin,false,"mixed",true);
-		KrakUIApp.chartOrdersLin.series[5].setData(KrakUIApp.ordSell3Lin,true,"mixed",true);
+		KrakUIApp.chartOrdersLin.series[0].setData(KrakUIApp.ordBid1Lin,false,true,true);
+		KrakUIApp.chartOrdersLin.series[1].setData(KrakUIApp.ordBid2Lin,false,true,true);
+		KrakUIApp.chartOrdersLin.series[2].setData(KrakUIApp.ordBid3Lin,false,true,true);
+		KrakUIApp.chartOrdersLin.series[3].setData(KrakUIApp.ordSell1Lin,false,true,true);
+		KrakUIApp.chartOrdersLin.series[4].setData(KrakUIApp.ordSell2Lin,false,true,true);
+		KrakUIApp.chartOrdersLin.series[5].setData(KrakUIApp.ordSell3Lin,true,true,true);
 	}
 }
 
@@ -597,12 +600,12 @@ var updateOrdersGraph = function() {
 	if (!KrakUIApp.chartOrders) {
 		return;
 	} else {
-		KrakUIApp.chartOrders.series[0].setData(KrakUIApp.orderBid1,false,"mixed",true);
-		KrakUIApp.chartOrders.series[1].setData(KrakUIApp.orderBid2,false,"mixed",true);
-		KrakUIApp.chartOrders.series[2].setData(KrakUIApp.orderBid3,false,"mixed",true);
-		KrakUIApp.chartOrders.series[3].setData(KrakUIApp.orderSell1,false,"mixed",true);
-		KrakUIApp.chartOrders.series[4].setData(KrakUIApp.orderSell2,false,"mixed",true);
-		KrakUIApp.chartOrders.series[5].setData(KrakUIApp.orderSell3,true,"mixed",true);
+		KrakUIApp.chartOrders.series[0].setData(KrakUIApp.orderBid1,false,true,true);
+		KrakUIApp.chartOrders.series[1].setData(KrakUIApp.orderBid2,false,true,true);
+		KrakUIApp.chartOrders.series[2].setData(KrakUIApp.orderBid3,false,true,true);
+		KrakUIApp.chartOrders.series[3].setData(KrakUIApp.orderSell1,false,true,true);
+		KrakUIApp.chartOrders.series[4].setData(KrakUIApp.orderSell2,false,true,true);
+		KrakUIApp.chartOrders.series[5].setData(KrakUIApp.orderSell3,true,true,true);
 	}
 }
 

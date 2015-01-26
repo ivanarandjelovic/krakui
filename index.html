@@ -3,15 +3,16 @@
 	<head>
 
 		<title>KrakUI</title>
-
-		<script src="node_modules/jquery/dist/jquery.min.js"></script>
+	    
 		<link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+	  <link href="index.css" rel="stylesheet">
+	    
+		<script src="node_modules/jquery/dist/jquery.min.js"></script>
 		<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="node_modules/angular/angular.min.js"></script>
 		<script src="node_modules/highcharts/scripts/highcharts.js"></script>
 		
-	    <link href="index.css" rel="stylesheet">
-	    <script src="js/krakui-api-key.js"></script>
+    <script src="js/krakui-api-key.js"></script>
 		<script src="js/krakui-static.js"></script>
 		<script src="js/angular_controllers.js"></script>
     
@@ -94,8 +95,8 @@
 			  		</tr>
 			  		<tr>
 			  			<th>Volume</th>
-			  			<td class="text-right active-text">{{ticker.v[0] | number : 8}}</td>
-			  			<td class="text-right active-text">{{ticker.v[1] | number : 8}}</td>
+			  			<td class="text-right active-text">{{ticker.v[0] | number : 5}}</td>
+			  			<td class="text-right active-text">{{ticker.v[1] | number : 5}}</td>
 			  		</tr>
 			  		<tr>
 			  			<th>Average</th>

@@ -3,6 +3,10 @@ body {
   background-color: black;
   color: #aaaaaa;
 }
+
+.container, .navbar {
+	  background-color: black;
+}
 .content {
   padding: 40px 15px;
   text-align: center;
@@ -12,3 +16,5 @@ body {
 .active-text {
   color: #ffff55;
 }
+
+
