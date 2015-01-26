@@ -197,7 +197,7 @@ KrakUIApp
 										orderData = data.result[$scope.activeAssetPair];
 										$scope.orderDataTime = new Date();
 									}
-									recalcOrders();
+									recalcOrders(orderData);
 									drawOrders($scope.activeAssetPair, orderData);
 								});
 							}
@@ -210,7 +210,7 @@ KrakUIApp
 								// Initiate ticker update and other updates:
 								tickerUpdate();
 								initOHLC();
-								getOrders();
+								$interval(getOrders,1500,1,false);
 							};
 							
 							// get initial set of treadable asset pairs
@@ -276,123 +276,86 @@ KrakUIApp
 						} ]);
 
 // calculate data needed for order graph
-var recalcOrders = function() {
-	KrakUIApp.orderBid1 = [ {
-		x : 1,
-		y : 1
-	}, {
-		x : 2,
-		y : 1
-	}, {
-		x : 3,
-		y : 1
-	}, {
-		x : 4,
-		y : 0
-	}, {
-		x : 5,
-		y : 0
-	}, {
-		x : 6,
-		y : 0
-	} ];
+var recalcOrders = function(orderData) {
 	
-	KrakUIApp.orderBid2 = [ {
-		x : 1,
-		y : 1
-	}, {
-		x : 2,
-		y : 1
-	}, {
-		x : 3,
-		y : 1
-	}, {
-		x : 4,
-		y : 0
-	}, {
-		x : 5,
-		y : 0
-	}, {
-		x : 6,
-		y : 0
-	} ];
-	KrakUIApp.orderBid3 = [ {
-		x : 1,
-		y : 1
-	}, {
-		x : 2,
-		y : 1
-	}, {
-		x : 3,
-		y : 1
-	}, {
-		x : 4,
-		y : 0
-	}, {
-		x : 5,
-		y : 0
-	}, {
-		x : 6,
-		y : 0
-	} ];
-	KrakUIApp.orderSell1 = [ {
-		x : 1,
-		y : 1
-	}, {
-		x : 2,
-		y : 1
-	}, {
-		x : 3,
-		y : 1
-	}, {
-		x : 4,
-		y : 0
-	}, {
-		x : 5,
-		y : 0
-	}, {
-		x : 6,
-		y : 0
-	} ];
-	KrakUIApp.orderSell2 = [ {
-		x : 1,
-		y : 1
-	}, {
-		x : 2,
-		y : 1
-	}, {
-		x : 3,
-		y : 1
-	}, {
-		x : 4,
-		y : 0
-	}, {
-		x : 5,
-		y : 0
-	}, {
-		x : 6,
-		y : 0
-	} ];
-	KrakUIApp.orderSell3 = [ {
-		x : 1,
-		y : 1
-	}, {
-		x : 2,
-		y : 1
-	}, {
-		x : 3,
-		y : 1
-	}, {
-		x : 4,
-		y : 0
-	}, {
-		x : 5,
-		y : 0
-	}, {
-		x : 6,
-		y : 0
-	} ];
-	;
+	var asks = orderData.asks;
+	var bids  = orderData.bids;
+	
+	var minPrice = null, maxPrice = null, i;
+	
+	for(i = 0; i< asks.length; i++) {
+		if(!minPrice) {
+			minPrice = Number(asks[i][0]);
+		}
+		if(!maxPrice) {
+			maxPrice = Number(asks[i][0]);
+		}
+		if(minPrice>Number(asks[i][0])) {
+			minPrice = Number(asks[i][0]);
+		}
+		if(maxPrice<Number(asks[i][0])) {
+			maxPrice = Number(asks[i][0]);
+		}
+	}
+
+	for(i = 0; i< bids.length; i++) {
+		if(!minPrice) {
+			minPrice = Number(bids[i][0]);
+		}
+		if(!maxPrice) {
+			maxPrice = Number(bids[i][0]);
+		}
+		if(minPrice>Number(bids[i][0])) {
+			minPrice = Number(bids[i][0]);
+		}
+		if(maxPrice<Number(bids[i][0])) {
+			maxPrice = Number(bids[i][0]);
+		}
+	}
+	
+	if(minPrice && maxPrice) {
+		// We have our range here:
+		var range = maxPrice - minPrice;
+		var step = range / 100.0;
+		// TODO: finish this... later
+	}
+	
+	var now = ((new Date()).getTime())/1000;
+	
+	var min1ago= now - 60;
+	var min15ago = now - 15*60;
+
+	//Clear data
+	KrakUIApp.orderBid1 = [], KrakUIApp.orderBid2 = [], KrakUIApp.orderBid3 = [], KrakUIApp.orderSell1 = [], KrakUIApp.orderSell2 = [], KrakUIApp.orderSell3 = [];
+	
+	var sum1=0.0, sum2=0.0, sum3 = 0.0;
+	
+	for(i = 0; i< asks.length; i++) {
+		if(asks[i][2] > min1ago) {
+			sum1+=Number(asks[i][1]);
+			KrakUIApp.orderSell1.push({x:Number(asks[i][0]),y:sum1});
+		} else if(asks[i][2] > min15ago) {
+			sum2+=Number(asks[i][1]);
+			KrakUIApp.orderSell2.push({x:Number(asks[i][0]),y:sum2});
+		} else {
+			sum3+=Number(asks[i][1]);
+			KrakUIApp.orderSell3.push({x:Number(asks[i][0]),y:sum3});
+		}
+	}
+	
+	sum1=0.0, sum2=0.0, sum3 = 0.0;
+	for(i = 0; i< bids.length; i++) {
+		if(bids[i][2] > min1ago) {
+			sum1+=Number(bids[i][1]);
+			KrakUIApp.orderBid1.push({x:Number(bids[i][0]),y:sum1});
+		} else if(bids[i][2] > min15ago) {
+			sum2+=Number(bids[i][1]);
+			KrakUIApp.orderBid2.push({x:Number(bids[i][0]),y:sum2});
+		} else {
+			sum3+=Number(bids[i][1]);
+			KrakUIApp.orderBid3.push({x:Number(bids[i][0]),y:sum3});
+		}
+	}
 }
 
 // Chart drawing section:
@@ -443,33 +406,34 @@ var drawOrders = function(activePairName, orderData) {
 				borderWidth : 0
 			},
 			 plotOptions: {
-         area: {
-             stacking: 'normal',
-             lineColor: '#666666',
-             lineWidth: 1,
-             marker: {
-                 lineWidth: 1,
-                 lineColor: '#666666'
-             }
-         }
-     },
-			series : [ {
-				name : 'bid1',
+		         area: {
+		             stacking: 'normal',
+		             lineColor: '#666666',
+		             lineWidth: 1,
+		             marker: {
+		                 lineWidth: 1,
+		                 lineColor: '#666666'
+		             }
+	         }
+	     },
+	     series : [  {
+				name : 'Bid >15 min',
 				data : KrakUIApp.orderBid1
 			}, {
-				name : 'bid2',
+				name : 'Bid 1-15 min',
 				data : KrakUIApp.orderBid2
 			}, {
-				name : 'bid3',
-				data : KrakUIApp.orderBid2
-			}, {
-				name : 'sell1',
+				name : 'Bid <1 min',
+				data : KrakUIApp.orderBid3
+			},
+			 {
+				name : 'Sell >15 min',
 				data : KrakUIApp.orderSell1
 			}, {
-				name : 'sell2',
+				name : 'Sell 1-15 min',
 				data : KrakUIApp.orderSell2
 			}, {
-				name : 'sell3',
+				name : 'Sell <1 min',
 				data : KrakUIApp.orderSell3
 			} ]
 		});
