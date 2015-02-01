@@ -6,9 +6,9 @@ var OHLC_UPDATE_INTERVAL_IN_MS = 10000;
 var ORDERS_UPDATE_INTERVAL_IN_MS = 10000;
 var graphPointCount = 60;
 var graphPointInterval = 1;
-var orderBookCount = 1000;
+var orderBookCount = 300;
 // Number of points on liner order graph
-var ordLinPointCount = 500.0;
+var ordLinPointCount = 300.0;
 var ordersData = null;
 
 var graphIntervals = [ {
@@ -661,8 +661,7 @@ var drawOrders = function(activePairName) {
 					lineColor : '#666666',
 					lineWidth : 1,
 					marker : {
-						lineWidth : 1,
-						lineColor : '#666666'
+						enabled : false
 					}
 				}
 			},
